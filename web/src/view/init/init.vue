@@ -5,8 +5,10 @@
     <div class="form-card in-three a-fadeinB">
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="数据库类型">
-          <el-select disabled v-model="form.sqlType" placeholder="请选择">
-            <el-option key="mysql" label="mysql(目前只支持mysql)" value="mysql">
+          <el-select v-model="form.sqlType" placeholder="请选择">
+            <el-option key="postgresql" label="postgresql" value="postgresql">
+            </el-option>
+            <el-option key="mysql" label="mysql" value="mysql">
             </el-option>
           </el-select>
         </el-form-item>

@@ -4,6 +4,7 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/initialize/internal"
 	"gin-vue-admin/model"
+	"gorm.io/driver/postgres"
 	"os"
 
 	"go.uber.org/zap"
@@ -19,6 +20,8 @@ import (
 
 func Gorm() *gorm.DB {
 	switch global.GVA_CONFIG.System.DbType {
+	case "postgresql":
+		return GormPostgreSql()
 	case "mysql":
 		return GormMysql()
 	default:
@@ -32,7 +35,7 @@ func Gorm() *gorm.DB {
 //@description: 注册数据库表专用
 //@param: db *gorm.DB
 
-func MysqlTables(db *gorm.DB) {
+func GormDBTables(db *gorm.DB) {
 	err := db.AutoMigrate(
 		model.SysUser{},
 		model.SysAuthority{},
@@ -80,7 +83,7 @@ func GormMysql() *gorm.DB {
 		SkipInitializeWithVersion: false, // 根据版本自动配置
 	}
 	if db, err := gorm.Open(mysql.New(mysqlConfig), gormConfig(m.LogMode)); err != nil {
-		//global.GVA_LOG.Error("MySQL启动异常", zap.Any("err", err))
+		global.GVA_LOG.Error("MySQL启动异常", zap.Any("err", err))
 		//os.Exit(0)
 		//return nil
 		return nil
@@ -88,6 +91,28 @@ func GormMysql() *gorm.DB {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+		return db
+	}
+}
+
+// GormPostgreSql 初始化PostgreSql数据库
+func GormPostgreSql() *gorm.DB {
+	p := global.GVA_CONFIG.Postgresql
+	dsn := "host=" + p.Host + " user=" + p.Username + " password=" + p.Password + " dbname=" + p.Dbname + " port=" + p.Port + " " + p.Config
+	postgresConfig := postgres.Config{
+		DSN:                  dsn,                    // DSN data source name
+		PreferSimpleProtocol: p.PreferSimpleProtocol, // 禁用隐式 prepared statement
+	}
+	gormConfig := gormConfig(p.Logger)
+	if db, err := gorm.Open(postgres.New(postgresConfig), gormConfig); err != nil {
+		global.GVA_LOG.Error("PostgreSql启动异常", zap.Any("err", err))
+		//os.Exit(0)
+		return nil
+	} else {
+		GormDBTables(db)
+		sqlDB, _ := db.DB()
+		sqlDB.SetMaxIdleConns(p.MaxIdleConns)
+		sqlDB.SetMaxOpenConns(p.MaxOpenConns)
 		return db
 	}
 }
