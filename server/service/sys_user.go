@@ -112,7 +112,7 @@ func SetUserInfo(reqUser model.SysUser) (err error, user model.SysUser) {
 
 func FindUserById(id int) (err error, user *model.SysUser) {
 	var u model.SysUser
-	err = global.GVA_DB.Where("`id` = ?", id).First(&u).Error
+	err = global.GVA_DB.Where("id = ?", id).First(&u).Error
 	return err, &u
 }
 
@@ -124,7 +124,7 @@ func FindUserById(id int) (err error, user *model.SysUser) {
 
 func FindUserByUuid(uuid string) (err error, user *model.SysUser) {
 	var u model.SysUser
-	if err = global.GVA_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil {
+	if err = global.GVA_DB.Where("uuid = ?", uuid).First(&u).Error; err != nil {
 		return errors.New("用户不存在"), &u
 	}
 	return nil, &u

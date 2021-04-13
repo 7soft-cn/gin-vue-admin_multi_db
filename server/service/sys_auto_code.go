@@ -198,7 +198,7 @@ func GetTables(dbName string) (err error, TableNames []request.TableReq) {
 //@return: []string, error
 
 func GetDB() (err error, DBNames []request.DBReq) {
-	err = global.GVA_DB.Raw("SELECT SCHEMA_NAME AS `database` FROM INFORMATION_SCHEMA.SCHEMATA;").Scan(&DBNames).Error
+	err = global.GVA_DB.Raw("SELECT SCHEMA_NAME AS database FROM INFORMATION_SCHEMA.SCHEMATA;").Scan(&DBNames).Error
 	return err, DBNames
 }
 

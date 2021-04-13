@@ -6,7 +6,7 @@
       <el-form ref="form" :model="form" label-width="100px">
         <el-form-item label="数据库类型">
           <el-select v-model="form.sqlType" placeholder="请选择">
-            <el-option key="postgresql" label="postgresql" value="postgresql">
+            <el-option key="postgres" label="postgres" value="postgres">
             </el-option>
             <el-option key="mysql" label="mysql" value="mysql">
             </el-option>

@@ -20,7 +20,7 @@ import (
 
 func Gorm() *gorm.DB {
 	switch global.GVA_CONFIG.System.DbType {
-	case "postgresql":
+	case "postgres":
 		return GormPostgreSql()
 	case "mysql":
 		return GormMysql()

@@ -28,7 +28,7 @@ func writeConfig(viper *viper.Viper, db interface{}) error {
 	switch global.GVA_CONFIG.System.DbType {
 	case "mysql":
 		global.GVA_CONFIG.Mysql = db.(config.Mysql)
-	case "postgresql":
+	case "postgres":
 		global.GVA_CONFIG.Postgresql = db.(config.Postgresql)
 	default:
 		global.GVA_CONFIG.Mysql = db.(config.Mysql)
@@ -80,7 +80,7 @@ func InitDB(conf request.InitDB) (err error) {
 	switch conf.SqlType {
 	case "mysql":
 		configDb, err = createDBMysql(conf)
-	case "postgresql":
+	case "postgres":
 		configDb, err = createDBPgsql(conf)
 	default:
 		configDb, err = createDBMysql(conf)
