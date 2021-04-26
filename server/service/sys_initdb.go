@@ -51,7 +51,12 @@ func createTable(dsn string, driver string, createSql string) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+
+		}
+	}(db)
 	if err = db.Ping(); err != nil {
 		return err
 	}
@@ -171,7 +176,9 @@ func createDBMysql(conf request.InitDB) (interface{}, error) {
 		//global.GVA_LOG.Error("MySQL启动异常", zap.Any("err", err))
 		//os.Exit(0)
 		//return nil
+		_ = writeConfig(global.GVA_VP, mysqlConfig)
 		return nil, err
+
 	} else {
 		sqlDB, _ := db.DB()
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
@@ -186,9 +193,8 @@ func createDBPgsql(conf request.InitDB) (interface{}, error) {
 	if conf.Host == "" {
 		conf.Host = "127.0.0.1"
 	}
-
 	if conf.Port == "" {
-		conf.Port = "3306"
+		conf.Port = "5432"
 	}
 	dsn := "host=" + conf.Host + " user=" + conf.UserName + " password=" + conf.Password + " port=" + conf.Port + " sslmode=disable TimeZone=Asia/Shanghai"
 	createSql := fmt.Sprintf("CREATE DATABASE %s ;", conf.DBName)
@@ -230,3 +236,6 @@ func createDBPgsql(conf request.InitDB) (interface{}, error) {
 		return PgsqlConfig, nil
 	}
 }
+
+
+
